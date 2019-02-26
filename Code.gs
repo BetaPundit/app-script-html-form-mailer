@@ -26,41 +26,71 @@ function handleResponse(e) {
     var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
     var nextRow = sheet.getLastRow()+1; // get next row
     var row = []; 
+    var result = '';
     var prevId = sheet.getRange(nextRow-1, 2, 1).getValues()[0][0]; // get previous id
     var id = +prevId + 1; // update current id by 1
+    var flag = 0;
     
-    // loop through the header columns
-    for (i in headers){
-      if (headers[i] == "Timestamp"){ // special case if you include a 'Timestamp' column
-        row.push(new Date());
-      } 
-      else if (headers[i] == "id"){ // special case if you include a 'id' column
-        row.push(id);
-      } else { // else use header name to get data
-        row.push(e.parameter[headers[i]]);
+    // get all clg ids
+    var allClgIds = sheet.getRange(1, 6, sheet.getLastRow()).getValues();
+    
+    // checking duplicate cld ids
+//    for (var i in allClgIds) {
+//      for (var j in allClgIds[i]) {
+//        if (allClgIds[i][j] == e.parameter.clgId) {
+//          result = "Sorry! You've already registered!"
+//        } else {
+//          result = "Registration Successful!"
+//        }
+//      }
+//    }
+    
+    for (var i = 0; i < sheet.getLastRow(); i++) {
+      if (allClgIds[i][0] == e.parameter.clgid) {
+        result = "Sorry! You've already registered!"
+        flag = 0;
+        break;
+      } else {
+        result = "Registration Successful!"
+        flag = 1;
       }
     }
-    // more efficient to set values as [][] array than individually
-    sheet.getRange(nextRow, 1, 1, row.length).setValues([row]);
     
-    //mailer script
-    var email = e.parameter.email;
-    var name = e.parameter.name;
-    var clgName = e.parameter.clgName;
-    var clgId = e.parameter.clgId;
-            
-    var message = 'Hey ' + '<em>' + name + '</em>' + '!<br/>' + 'This is your Spandan id: <br/>' + '<h1>' + 'SP' + id + '</h1>';
-    
-    MailApp.sendEmail({
-      to: email,
-      subject: "Here's is your Spandan id",
-      replyTo: 'adityaas26@gmail.com',
-      htmlBody: message
-     });
-    
+    if (flag == 1) {
+      // loop through the header columns
+      for (i in headers){
+        if (headers[i] == "Timestamp"){ // special case if you include a 'Timestamp' column
+          row.push(new Date());
+        } 
+        else if (headers[i] == "id"){ // special case if you include a 'id' column
+          row.push(id);
+        } else { // else use header name to get data
+          row.push(e.parameter[headers[i]]);
+        }
+      }
+      // more efficient to set values as [][] array than individually
+      sheet.getRange(nextRow, 1, 1, row.length).setValues([row]);
+      
+      //mailer script
+      var email = e.parameter.email;
+      var name = e.parameter.name;
+      var clgName = e.parameter.clgName;
+      var clgId = e.parameter.clgid;
+      
+      var message = 'Hey ' + '<em>' + name + '</em>' + '!<br/>' + 'This is your Spandan id: <br/>' + '<h1>' + 'SP' + id + '</h1>';
+      
+      MailApp.sendEmail({
+        to: email,
+        subject: "Here's is your Spandan id",
+        replyTo: 'adityaas26@gmail.com',
+        htmlBody: message
+      });
+      
+    }
+       
     // return json success results
     return ContentService
-    .createTextOutput(JSON.stringify({"result":"success", "row": nextRow, "id": id}))
+    .createTextOutput(JSON.stringify({"result": result, "row": nextRow, "id": id, "flag" : flag}))
           .setMimeType(ContentService.MimeType.JSON);
   } catch(e){
     // if error return this
