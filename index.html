@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
   <link rel="stylesheet" href="css/modal.css">
   <link rel="stylesheet" href="css/loader.css">
-  <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script> -->
   <script src="js/jquery.min.js"></script>
 
   <title>HTML form</title>
@@ -37,30 +36,28 @@
           <div class="col-md-12 mb-3">
             <label for="name">Name</label>
             <input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
-            <div class="invalid-feedback">
+            <div class="invalid-tooltip">
               Please enter name.
             </div>
           </div>
           <div class="col-md-12 mb-3">
             <label for="email">Email</label>
-            <input type="text" class="form-control" id="email" name="email" placeholder="Email" required>
-            <div class="invalid-feedback">
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+            <div class="invalid-tooltip">
               Please enter valid email id!
             </div>
           </div>
           <div class="col-md-12 mb-3">
             <label for="clgname">College Name</label>
-            <input type="text" class="form-control" id="clgname" name="clgname" placeholder="College Name"
-              required>
-            <div class="invalid-feedback">
+            <input type="text" class="form-control" id="clgname" name="clgname" placeholder="College Name" required>
+            <div class="invalid-tooltip">
               Please provide a college name.
             </div>
           </div>
           <div class="col-md-12 mb-3">
             <label for="clgid">Enroll No.</label>
-            <input type="text" class="form-control" id="clgid" name="clgid" placeholder="Enroll No."
-              required>
-            <div class="invalid-feedback">
+            <input type="text" class="form-control" id="clgid" name="clgid" placeholder="Enroll No." required>
+            <div class="invalid-tooltip">
               Please provide a valid enroll no.!
             </div>
           </div>
@@ -77,68 +74,55 @@
     var $form = $('form#reg-form'),
       url = 'https://script.google.com/macros/s/AKfycbzJj0b9e2oAr0WjpdcLPJSjorI0BWrF4oOZNG-gh8oL66_caseL/exec'
 
-    var nameInp = document.getElementById("name");
-    var emailInp = document.getElementById("email");
-    var clgNameInp = document.getElementById("clgname");
-    var ClgIdInp = document.getElementById("clgid");
+    var $openButton = $('button#open-button');
+    // console.log('Open Button: ', $openButton[0]);
 
-   
+    $openButton.on('click', function () {
+      setTimeout(function () {
+        var $nameInp = $("input#name");
+        var $nameInp = $("input#name");
+        var $emailInp = $("input#email");
+        var $clgNameInp = $("input#clgname");
+        var $clgIdInp = $("input#clgid");
+        // console.log('Name Input: ', $nameInp[0]);
 
-    $('#submit-form').on('click', function (e) {
-      
-      // if (!nameInp.checkValidity() || !emailInp.checkValidity() || !clgNameInp.checkValidity() || !clgIdInp.checkValidity()) {
-      //   document.getElementById("invalid-feedback").innerHTML = nameInp.validationMessage;
-      // } else {
-      //   document.getElementById("invalid-feedback").innerHTML = "Input OK";
-      // } 
-      // validate();
-      e.preventDefault();
-      var formData = $.ajax({
-        url: url,
-        method: "GET",
-        dataType: "json",
-        data: $form.serializeArray(),
-        success: (res => {
-          if (res['flag'] == 1) {
-            alert(res['result'] + "\nID: " + "SP" + res['id']);
-            clearFields();
+        $('#submit-form').on('click', function (e) {
+          e.preventDefault();
+          if (!$nameInp[0].checkValidity() || !$emailInp[0].checkValidity() || !$clgNameInp[0].checkValidity() ||
+            !$clgIdInp[0].checkValidity()) {
+
+            // console.log('Invalid Input!');
           } else {
-            alert(res['result']);
-            clearFields();
+            // send AJAX request
+            var formData = $.ajax({
+            url: url,
+            method: "GET",
+            dataType: "json",
+            data: $form.serializeArray(),
+            success: (res => {
+              if (res['flag'] == 1) {
+                alert(res['result'] + "\nID: " + "SP" + res['id']);
+                clearFields();
+              } else {
+                alert(res['result']);
+                clearFields();
+              }
+              // console.log(res);
+              // console.log(res['id']);
+            })
+          });
           }
-          console.log(res);
-          console.log(res['id']);
+          $form[0].classList.add('was-validated');
         })
-      });
-      console.log(formData);
-    })
+
+      }, 600);
+    });
 
     function clearFields() {
       document.getElementById('reg-form').reset();
     }
   </script>
 
-  <!-- Below is the code for validating bootstrap form but does not work when opening form in modal -->
-  <!-- <script>
-    // Example starter JavaScript for disabling form submissions if there are invalid fields
-    (function () {
-      'use strict';
-      window.addEventListener('load', function () {
-        // Fetch all the forms we want to apply custom Bootstrap validation styles to
-        var forms = document.getElementsByClassName('needs-validation');
-        // Loop over them and prevent submission
-        var validation = Array.prototype.filter.call(forms, function (form) {
-          form.addEventListener('submit', function (event) {
-            if (form.checkValidity() === false) {
-              event.preventDefault();
-              event.stopPropagation();
-            }
-            form.classList.add('was-validated');
-          }, false);
-        });
-      }, false);
-    })();
-  </script> -->
 
 
   <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
