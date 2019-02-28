@@ -102,7 +102,7 @@
             data: $form.serializeArray(),
             success: (res => {
               if (res['flag'] == 1) {
-                alert(res['result'] + "<h2>" + "\nID: " + "SP" + res['id'] + "</h2>");
+                alert(res['result'] + "\nID: " + "SP" + res['id']);
                 clearFields();
               } else {
                 alert(res['result']);
