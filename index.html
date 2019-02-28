@@ -75,6 +75,7 @@
       url = 'https://script.google.com/macros/s/AKfycbzJj0b9e2oAr0WjpdcLPJSjorI0BWrF4oOZNG-gh8oL66_caseL/exec'
 
     var $openButton = $('button#open-button');
+    
     // console.log('Open Button: ', $openButton[0]);
 
     $openButton.on('click', function () {
@@ -84,7 +85,7 @@
         var $emailInp = $("input#email");
         var $clgNameInp = $("input#clgname");
         var $clgIdInp = $("input#clgid");
-        // console.log('Name Input: ', $nameInp[0]);
+        $('button#close-button').on('click', clearFields);
 
         $('#submit-form').on('click', function (e) {
           e.preventDefault();
@@ -101,7 +102,7 @@
             data: $form.serializeArray(),
             success: (res => {
               if (res['flag'] == 1) {
-                alert(res['result'] + "\nID: " + "SP" + res['id']);
+                alert(res['result'] + "<h2>" + "\nID: " + "SP" + res['id'] + "</h2>");
                 clearFields();
               } else {
                 alert(res['result']);
@@ -120,9 +121,9 @@
 
     function clearFields() {
       document.getElementById('reg-form').reset();
+      $form[0].classList.remove('was-validated');
     }
   </script>
-
 
 
   <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
